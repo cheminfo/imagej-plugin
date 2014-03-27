@@ -161,7 +161,7 @@ IJ.prototype = {
 		 * @return 	[imageStats]	Result of the analysis as a JSON object
 		 */
 		analyze: function(mask, options) {
-			return JSON.parse(this.EIJ.analyze(mask, options));
+			return JSON.parse(this.EIJ.analyze(mask.EIJ, options));
 		},
 
 		/**
@@ -184,7 +184,7 @@ IJ.prototype = {
 		 * @return 	[+IJ]			Array of IJ containing the images
 		 */
 		split: function(mask, options) {
-			var javaSplit=this.EIJ.split(mask, options);
+			var javaSplit=this.EIJ.split(mask.EIJ, options);
 			// we obtain a "java array"
 			var split=[];
 			for (var i=0; i<javaSplit.length; i++) {
