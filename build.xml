@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="imageJ" name="Create Runnable Jar for Project imageJPlugin">
+	
+	<taskdef resource="proguard/ant/task.properties" classpath="../library/lib/proguard4_9.jar" />
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+	<target name="propconfig">
+		<echo>Java home is ${java.home}</echo>
+		<!-- this seems cumbersome but ant does not allow to alter properties! -->
+		<condition property="pglibs" value="-libraryjars ${java.home}/../Classes/classes.jar	-libraryjars ${java.home}/../Classes/ui.jar">
+			<os family="mac" />
+		</condition>
+		<condition property="pglibs" value='-libraryjars "${java.home}\\lib\\rt.jar"'>
+			<os family="windows" />
+		</condition>
+		<condition property="pglibs" value='-libraryjars ${java.home}/lib/rt.jar'>
+			<os family="unix" />
+		</condition>
+	</target>
+	<!--
+	Clean the dependency directory
+	-->
+	<target name="clean">
+		<delete dir="dependencies" />
+	</target>
+	
+	<target name="prepare" depends="propconfig">
+		<antcall target="clean">
+		</antcall>
+		<mkdir dir="dependencies" />
+		<unjar  src="./lib/ij.jar" dest="dependencies" />
+	</target>
+	
+    <target name="imageJ-full" depends="prepare">
+        <jar destfile="./jars/imageJPlugin-full.jar" filesetmanifest="mergewithoutmain">
+            <fileset dir="bin">
+            	<exclude name="**/test/**" />
+            	<exclude name="*/test/*.class" />
+            	<exclude name="**/*.jpg" />
+            	<exclude name="**/*.jpg" />
+            	<include name="**/*.class" />
+            	<include name="**/*.js" />
+            	<include name="**/*.txt" />
+            	<include name="plugin.properties" />
+            </fileset>
+        	<fileset dir="dependencies">
+        		<exclude name="META-INF/**" />
+        		<exclude name="**/*.jpg" />
+        		<exclude name="**/*.png" />
+        		<exclude name="**/*.gif" />
+        		<exclude name="ij.text.*" />
+        	</fileset>
+        </jar>
+    </target>
+	
+	<target name="imageJ-noproguard" depends="imageJ-full">
+		<copy file="./jars/imageJPlugin-full.jar" tofile="/usr/local/script/plugins/imageJPlugin.jar">
+		</copy>
+	</target>
+	
+	<target name="imageJ" depends="imageJ-full">
+		<proguard>
+			-ignorewarnings -verbose
+			-libraryjars ../library/lib/comm.jar
+			${pglibs}
+										
+			-injars      jars/imageJPlugin-full.jar
+			-outjars     jars/imageJPlugin.jar
+										
+			-keep public class org.cheminfo.scripting.image.* { *; } 
+			-keep public class org.cheminfo.scripting.image.*.* {public *;}
+			-keep public class ij.* {public *;}
+			-keep public class ij.gui.Roi {public *;}
+			-keep public class ij.gui.ShapeRoi {public *;}
+			-keep public class ij.io.FileSaver {public *;}
+			-keep public class ij.plugin.* {public *;}
+			-keep public class ij.process.* {public *;}
+		</proguard>
+		<copy todir="/usr/local/script/plugins">
+		  <fileset dir="./jars/"
+		           includes="imageJPlugin.jar"
+		  />
+		</copy>
+	</target>
+</project>
