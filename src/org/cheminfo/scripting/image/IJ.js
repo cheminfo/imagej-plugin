@@ -184,11 +184,17 @@ IJ.prototype = {
 		 * @return 	[+IJ]			Array of IJ containing the images
 		 */
 		split: function(mask, options) {
-			var javaSplit=this.EIJ.split(mask.EIJ, options);
-			// we obtain a "java array"
-			var split=[];
-			for (var i=0; i<javaSplit.length; i++) {
-				split.push(new IJ(javaSplit[i]));
+			var javaSplit;
+			if(mask instanceof IJ) {
+				javaSplit=this.EIJ.split(mask.EIJ, options);
+			} else if(mask instanceof Array) {
+				javaSplit = this.EIJ.split(mask, options);
+			} else {
+				javaSplit = this.EIJ.split(options);
+			}
+			var l = javaSplit.length, split = new Array(l);
+			for (var i=0; i<l; i++) {
+				split[i]=new IJ(javaSplit[i]);
 			}
 			return split;
 		},
