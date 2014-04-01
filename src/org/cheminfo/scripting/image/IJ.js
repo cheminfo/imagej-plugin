@@ -161,7 +161,15 @@ IJ.prototype = {
 		 * @return 	[imageStats]	Result of the analysis as a JSON object
 		 */
 		analyze: function(mask, options) {
-			return JSON.parse(this.EIJ.analyze(mask.EIJ, options));
+			var result;
+			if(mask instanceof IJ) {
+				result=this.EIJ.analyze(mask.EIJ, options);
+			} else if(mask instanceof Array) {
+				result = this.EIJ.analyze(mask, options);
+			} else {
+				result = this.EIJ.analyze(options);
+			}
+			return JSON.parse(result);
 		},
 
 		/**
