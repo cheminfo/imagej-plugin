@@ -22,6 +22,16 @@ IJ.load=function(filename) {
 };
 
 /**
+ * 
+ */
+IJ.loadBase64=function(data) {
+	if(data.startsWith("data:")) {
+		data = data.replace(/^data:.*,/,"");
+	}
+	return new IJ(IJAPI.loadBase64(Global.basedir, Global.basedirkey, data));
+}
+
+/**
  * @function hashDistance(hash1, hash2)
  * Returns the Hamming distance between the two hashes
  * @param 	hash1:number	The first hash

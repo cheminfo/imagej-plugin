@@ -1,8 +1,15 @@
 package org.cheminfo.scripting.image;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+
+import javax.imageio.ImageIO;
+
 import org.cheminfo.function.Function;
 import org.cheminfo.function.scripting.SecureFileManager;
 import org.json.JSONObject;
+
+import sun.misc.BASE64Decoder;
 
 public class IJ extends Function {
 	/**
@@ -24,6 +31,20 @@ public class IJ extends Function {
 				return null;
 			return new EIJ(basedir, basedirkey, fullFilename, this);
 		}
+	}
+	
+	public EIJ loadBase64(String basedir, String basedirkey, String data) {
+		BufferedImage image = null;
+		try {
+			BASE64Decoder decoder = new BASE64Decoder();
+			byte[] imageByte = decoder.decodeBuffer(data);
+			ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
+			image = ImageIO.read(bis);
+			bis.close();
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+		return new EIJ(image, basedir, basedirkey, this);
 	}
 	
 	/**

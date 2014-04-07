@@ -86,6 +86,12 @@ public class EIJ extends ImagePlus implements Cloneable {
 		this.ij=model.ij;
 		this.setProcessor(newImageProcessor);
 	}
+	public EIJ(BufferedImage image, String basedir, String key, IJ ij) {
+		super("", image);
+		this.basedir = basedir;
+		this.key = key;
+		this.ij = ij;
+	}
 	
 	public boolean save(String path) {
 		return save(path, null);
