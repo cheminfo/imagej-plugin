@@ -22,7 +22,10 @@ IJ.load=function(filename) {
 };
 
 /**
- * 
+ * @function loadBase64(data)
+ * Load an image from its base64-encoded string
+ * @param	data:string	Base64 representation of the image
+ * @return	+IJ	The loaded image
  */
 IJ.loadBase64=function(data) {
 	if(data.startsWith("data:")) {
