@@ -72,7 +72,7 @@ IJ.prototype = {
 		 * @param		mask:+IJ 		Image containing the mask
 		 */
 		saveTransparentPng: function(path, mask) {
-			this.EIJ.saveTransparentPng(File.checkGlobal(path), mask);
+			this.EIJ.saveTransparentPng(File.checkGlobal(path), mask.EIJ);
 		},
 
 
