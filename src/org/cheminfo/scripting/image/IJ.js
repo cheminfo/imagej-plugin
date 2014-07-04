@@ -342,6 +342,16 @@ IJ.prototype = {
 			return this.EIJ.getRois(options);
 		},
 
+    /**
+     * @function    getPolygons(rois)
+     * Returns an array of polygons extracted from the rois
+     * @param   rois:[?]    Array containing the rois (typically the return value of getRois)
+     * @returns [?]
+     */
+    getPolygons: function(rois) {
+        return this.EIJ.getPolygons(rois);
+    },
+
 		/**
 		 * @function		duplicate()
 		 * Returns a copy of the EIJ Image

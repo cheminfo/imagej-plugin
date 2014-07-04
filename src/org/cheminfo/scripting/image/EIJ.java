@@ -36,6 +36,7 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 
 import org.cheminfo.function.scripting.SecureFileManager;
+import org.cheminfo.scripting.image.extraction.EPolygon;
 import org.cheminfo.scripting.image.filters.InvariantFeatureHistogramFilter;
 import org.cheminfo.scripting.image.filters.LocalBinaryPartitionFilter;
 import org.cheminfo.scripting.image.filters.TamutaTextureFilter;
@@ -100,9 +101,8 @@ public class EIJ extends ImagePlus implements Cloneable {
 	/**
 	 * Saves the given image in the format specified by the extension of the
 	 * path. In the options you can specify the quality of the resulting image.
-	 * 
-	 * @param image
-	 * @param fullName
+	 *
+	 * @param name
 	 * @param options
 	 *            {quality:(0-100)} only works for jpeg
 	 * @return boolean: If it succeed saving or not
@@ -122,48 +122,48 @@ public class EIJ extends ImagePlus implements Cloneable {
 			int dotLoc = fullName.lastIndexOf('.');
 			String format = fullName.substring(dotLoc + 1);
 			format = format.toLowerCase(Locale.US);
-			if (format.indexOf("tif") != -1) {
-				if (fullName != null && !fullName.endsWith(".tiff"))
+			if (format.contains("tif")) {
+				if (!fullName.endsWith(".tiff"))
 					fullName = updateExtension(fullName, ".tif");
 				format = "tif";
 				return fileSaver.saveAsTiff(fullName);
-			} else if (format.indexOf("jpeg") != -1
-					|| format.indexOf("jpg") != -1) {
+			} else if (format.contains("jpeg")
+					|| format.contains("jpg")) {
 				fullName = updateExtension(fullName, ".jpg");
 				format = "jpeg";
 				FileSaver.setJpegQuality(quality);
 				return fileSaver.saveAsJpeg(fullName);
-			} else if (format.indexOf("gif") != -1) {
+			} else if (format.contains("gif")) {
 				fullName = updateExtension(fullName, ".gif");
 				format = "gif";
 				return fileSaver.saveAsGif(fullName);
-			} else if (format.indexOf("text") != -1
-					|| format.indexOf("txt") != -1) {
-				if (fullName != null && !fullName.endsWith(".xls"))
+			} else if (format.contains("text")
+					|| format.contains("txt")) {
+				if (!fullName.endsWith(".xls"))
 					fullName = updateExtension(fullName, ".txt");
 				format = "txt";
 				return fileSaver.saveAsText(fullName);
-			} else if (format.indexOf("zip") != -1) {
+			} else if (format.contains("zip")) {
 				fullName = updateExtension(fullName, ".zip");
 				format = "zip";
 				return fileSaver.saveAsZip(fullName);
-			} else if (format.indexOf("raw") != -1) {
+			} else if (format.contains("raw")) {
 				// path = updateExtension(path, ".raw");
 				format = "raw";
 				return fileSaver.saveAsRaw(fullName);
-			} else if (format.indexOf("bmp") != -1) {
+			} else if (format.contains("bmp")) {
 				fullName = updateExtension(fullName, ".bmp");
 				format = "bmp";
 				return fileSaver.saveAsBmp(fullName);
-			} else if (format.indexOf("fits") != -1) {
+			} else if (format.contains("fits")) {
 				fullName = updateExtension(fullName, ".fits");
 				format = "fits";
 				return fileSaver.saveAsFits(fullName);
-			} else if (format.indexOf("png") != -1) {
+			} else if (format.contains("png")) {
 				fullName = updateExtension(fullName, ".png");
 				format = "png";
 				return fileSaver.saveAsPng(fullName);
-			} else if (format.indexOf("pgm") != -1) {
+			} else if (format.contains("pgm")) {
 				fullName = updateExtension(fullName, ".pgm");
 				format = "pgm";
 				return fileSaver.saveAsPgm(fullName);
@@ -346,7 +346,7 @@ public class EIJ extends ImagePlus implements Cloneable {
 		try {
 			JSONObject parameters = ij.checkParameter(options);
 			String method=parameters.has("method")?parameters.getString("method"):"Default";
-			boolean darkBackground=parameters.has("darkBackground")?parameters.getBoolean("darkBackground"):true;
+			boolean darkBackground= !parameters.has("darkBackground") || parameters.getBoolean("darkBackground");
 			String maskColor=parameters.has("maskColor")?parameters.getString("maskColor"):"red";
 			int mode=ImageProcessor.RED_LUT;
 			if (maskColor.equalsIgnoreCase("original")) mode=ImageProcessor.NO_LUT_UPDATE;
@@ -859,6 +859,17 @@ public class EIJ extends ImagePlus implements Cloneable {
 	    
 	    return rois;
 	}
+    
+    public EPolygon[] getPolygons(Roi[] rois) {
+
+        EPolygon[] result = new EPolygon[rois.length];
+
+        for(int i = 0; i < rois.length; i++) {
+            result[i] = new EPolygon(rois[i].getPolygon());
+        }
+
+        return result;
+    }
 	
 	// sortBy: 0: by X, 1: by Y, 2: by Length
 	public EIJ[] split(ImagePlus mask, Object options) {
@@ -1070,7 +1081,6 @@ public class EIJ extends ImagePlus implements Cloneable {
 		}
 		return histogram;
 	}
-	
 }
 
 class RoiSorterByX implements Comparator<Roi> {

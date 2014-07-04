@@ -16,7 +16,7 @@ public class IJ extends Function {
 	 * This function load an imageJ. Supported formats: JPEG, JPG,BMP, TIFF, PNG
 	 * 
 	 * @param basedir
-	 * @param key
+	 * @param basedirkey
 	 * @param filename
 	 * @return and extended ImageJ object
 	 */
